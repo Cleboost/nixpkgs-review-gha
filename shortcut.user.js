@@ -32,7 +32,7 @@ const reviewDefaults = ({
     "aarch64-darwin": !hasRebuilds || hasDarwinRebuilds ? `yes_sandbox_${darwinSandbox}` : "no",
     // "riscv64-linux": false,
     // "extra-args": "",
-    // "push-to-cache": true,
+    "push-to-cache": "false",
     // "upterm": false,
     // "post-result": true,
     "on-success": "approve",
