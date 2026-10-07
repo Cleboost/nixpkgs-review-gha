@@ -35,7 +35,7 @@ const reviewDefaults = ({
     // "push-to-cache": true,
     // "upterm": false,
     // "post-result": true,
-    // "on-success": "nothing",
+    "on-success": "approve",
   };
 };
 
