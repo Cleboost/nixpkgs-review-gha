@@ -1,0 +1,38 @@
+# Contournement: workflow_dispatch depuis PAT renvoie parfois 422 sur fork.
+# Push sur .review-queue déclenche les reviews via GITHUB_TOKEN.
+name: dispatch-review
+on:
+  push:
+    branches: [main]
+    paths:
+      - .review-queue
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: run nixpkgs-review workflows
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          while read -r pr; do
+            case "$pr" in ''|\#*) continue ;; esac
+            echo "dispatch review for PR #$pr"
+            gh workflow run review.yml \
+              -f "pr=$pr" \
+              -f post-result=false \
+              -f on-success=nothing \
+              -f x86_64-linux=true \
+              -f aarch64-linux=true \
+              -f x86_64-darwin=no \
+              -f aarch64-darwin=no \
+              -f riscv64-linux=false \
+              -f push-to-cache=false \
+              -f upterm=false
+          done < .review-queue
